@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>World Famous Places Slider</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      background: url("https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg") no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+
+    /* Dark overlay on background */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(2px);
+      z-index: 0;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #fff;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.7);
+      font-size: 2.2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slider-wrapper {
+      overflow: hidden;
+      max-width: 930px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slider-container {
+      display: flex;
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      width: 280px;
+      margin: 0 15px;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+
+    .card .info {
+      padding: 15px;
+      text-align: left;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      margin: 5px 0;
+      color: #fff;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #f0f0f0;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+
+    /* Buttons */
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 25px;
+      position: relative;
+      z-index: 1;
+    }
+    .title {
+  font-size: 2.8rem;
+  text-align: center;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+  font-family: "Poppins", sans-serif;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  position: relative;
+  display: inline-block;
+  padding: 5px 15px;
+}
+
+.title::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -12px;
+  width: 60%;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #6dd5ed, #2193b0);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+    button {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: background 0.4s, transform 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #3498db, #9b59b6);
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="title">Explore Famous World Locations</h1>
+  <div class="slider-wrapper">
+    <div class="slider-container" id="slider"></div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="showPrevious()">&#8592;</button>
+    <button onclick="showNext()">&#8594;</button>
+  </div>
+
+  <script>
+const locations = [
+  { name: "Eiffel Tower, Paris", image: "https://images.pexels.com/photos/1461974/pexels-photo-1461974.jpeg", description: "An iconic symbol of France and a marvel of modern architecture." },
+  { name: "Great Wall of China", image: "https://upload.wikimedia.org/wikipedia/commons/1/10/20090529_Great_Wall_8185.jpg", description: "A historical fortification stretching over 13,000 miles in China." },
+  { name: "Statue of Liberty, New York", image: "https://images.pexels.com/photos/60003/statue-of-liberty-new-york-ny-nyc-60003.jpeg", description: "A universal symbol of freedom and democracy in the USA." },
+  { name: "Taj Mahal, India", image: "https://images.pexels.com/photos/7263897/pexels-photo-7263897.jpeg", description: "A white marble mausoleum built by Emperor Shah Jahan in memory of his wife." },
+  { name: "Colosseum, Rome", image: "https://images.pexels.com/photos/1797161/pexels-photo-1797161.jpeg", description: "An ancient Roman amphitheatre famous for gladiator contests." },
+  { name: "Sydney Opera House, Australia", image: "https://images.pexels.com/photos/1878293/pexels-photo-1878293.jpeg", description: "A world-famous architectural masterpiece on Sydney Harbour." },
+  { name: "Statue of Unity, India", image: "https://images.pexels.com/photos/11938693/pexels-photo-11938693.jpeg", description: "A massive statue of Sardaar Vallabhbhai Patel located in Gujarat, India." },
+  { name: "Pyramids of Giza, Egypt", image: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Kheops-Pyramid.jpg", description: "Ancient pyramids that are among the Seven Wonders of the Ancient World." },
+  { name: "Mount Fuji, Japan", image: "https://images.pexels.com/photos/31761352/pexels-photo-31761352.jpeg", description: "Japan’s highest mountain and a sacred site for centuries." }
+];
+
+let currentIndex = 0;
+const itemsPerPage = 3;
+
+function renderSlider() {
+  const slider = document.getElementById('slider');
+  slider.innerHTML = '';
+
+  const clonesBefore = locations.slice(-itemsPerPage);
+  const clonesAfter = locations.slice(0, itemsPerPage);
+
+  const allSlides = [...clonesBefore, ...locations, ...clonesAfter];
+
+  allSlides.forEach(loc => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img src="${loc.image}" alt="${loc.name}">
+      <div class="info">
+        <h3>${loc.name}</h3>
+        <p>${loc.description}</p>
+      </div>
+    `;
+    slider.appendChild(card);
+  });
+
+  currentIndex = itemsPerPage;
+  updateTransform(false);
+}
+
+function updateTransform(animate = true) {
+  const slider = document.getElementById('slider');
+  if (!animate) slider.style.transition = "none";
+  else slider.style.transition = "transform 0.6s ease-in-out";
+
+  const offset = -(currentIndex * 310);
+  slider.style.transform = `translateX(${offset}px)`;
+}
+
+function showNext() {
+  currentIndex += itemsPerPage;
+  updateTransform();
+
+  const slider = document.getElementById('slider');
+  slider.addEventListener('transitionend', () => {
+    if (currentIndex >= locations.length + itemsPerPage) {
+      currentIndex = itemsPerPage;
+      updateTransform(false);
+    }
+  }, { once: true });
+}
+
+function showPrevious() {
+  currentIndex -= itemsPerPage;
+  updateTransform();
+
+  const slider = document.getElementById('slider');
+  slider.addEventListener('transitionend', () => {
+    if (currentIndex < itemsPerPage) {
+      currentIndex = locations.length;
+      updateTransform(false);
+    }
+  }, { once: true });
+}
+
+renderSlider();
+  </script>
+
+</body>
+</html>
